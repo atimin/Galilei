@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{73EF054E-B20E-4E6F-B7CD-8461019CD663}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Galilei.Test</RootNamespace>
+    <AssemblyName>Galilei.Test</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="Server\REST\UDelete.cs" />
+    <Compile Include="Server\REST\UGet.cs" />
+    <Compile Include="Server\REST\UPost.cs" />
+    <Compile Include="Server\REST\UPut.cs" />
+    <Compile Include="Server\UConfig.cs" />
+    <Compile Include="Server\TestNode.cs" />
+    <Compile Include="Core\UNode.cs" />
+    <Compile Include="Core\URoot.cs" />
+    <Compile Include="Core\Xpca\UXpcaAccessor.cs" />
+    <Compile Include="Core\Xpca\UXpcaJsonSerializer.cs" />
+    <Compile Include="Core\Xpca\UXpcaXmlSerializer.cs" />
+    <Compile Include="Core\UPoint.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Server\" />
+    <Folder Include="Server\REST\" />
+    <Folder Include="Core\Xpca\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Galilei.Core\Galilei.Core.csproj">
+      <Project>{F98FE069-9661-4357-AF46-45702A431882}</Project>
+      <Name>Galilei.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Galilei\Galilei.csproj">
+      <Project>{C828CCCF-D65C-45FB-ABCA-FD2C1E52B650}</Project>
+      <Name>Galilei</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

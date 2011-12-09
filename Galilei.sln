@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Galilei", "Galilei\Galilei.csproj", "{C828CCCF-D65C-45FB-ABCA-FD2C1E52B650}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Galilei.Core", "Galilei.Core\Galilei.Core.csproj", "{F98FE069-9661-4357-AF46-45702A431882}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Galilei.Test", "Galilei.Test\Galilei.Test.csproj", "{73EF054E-B20E-4E6F-B7CD-8461019CD663}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Galilei.Simulator", "Galilei.Simulator\Galilei.Simulator.csproj", "{B790F233-E1F5-4267-A40F-1C0F1CC8C729}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+		Default|Any CPU = Default|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73EF054E-B20E-4E6F-B7CD-8461019CD663}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{73EF054E-B20E-4E6F-B7CD-8461019CD663}.Debug|x86.Build.0 = Debug|Any CPU
+		{73EF054E-B20E-4E6F-B7CD-8461019CD663}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{73EF054E-B20E-4E6F-B7CD-8461019CD663}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{73EF054E-B20E-4E6F-B7CD-8461019CD663}.Release|x86.ActiveCfg = Release|Any CPU
+		{73EF054E-B20E-4E6F-B7CD-8461019CD663}.Release|x86.Build.0 = Release|Any CPU
+		{B790F233-E1F5-4267-A40F-1C0F1CC8C729}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B790F233-E1F5-4267-A40F-1C0F1CC8C729}.Debug|x86.Build.0 = Debug|Any CPU
+		{B790F233-E1F5-4267-A40F-1C0F1CC8C729}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{B790F233-E1F5-4267-A40F-1C0F1CC8C729}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{B790F233-E1F5-4267-A40F-1C0F1CC8C729}.Release|x86.ActiveCfg = Release|Any CPU
+		{B790F233-E1F5-4267-A40F-1C0F1CC8C729}.Release|x86.Build.0 = Release|Any CPU
+		{C828CCCF-D65C-45FB-ABCA-FD2C1E52B650}.Debug|x86.ActiveCfg = Debug|x86
+		{C828CCCF-D65C-45FB-ABCA-FD2C1E52B650}.Debug|x86.Build.0 = Debug|x86
+		{C828CCCF-D65C-45FB-ABCA-FD2C1E52B650}.Release|x86.ActiveCfg = Release|x86
+		{C828CCCF-D65C-45FB-ABCA-FD2C1E52B650}.Release|x86.Build.0 = Release|x86
+		{F98FE069-9661-4357-AF46-45702A431882}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F98FE069-9661-4357-AF46-45702A431882}.Debug|x86.Build.0 = Debug|Any CPU
+		{F98FE069-9661-4357-AF46-45702A431882}.Release|x86.ActiveCfg = Release|Any CPU
+		{F98FE069-9661-4357-AF46-45702A431882}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Galilei\Galilei.csproj
+	EndGlobalSection
+EndGlobal
