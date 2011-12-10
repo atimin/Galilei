@@ -77,12 +77,13 @@ namespace Galilei
 		
 		public void Start()			
 		{	
+			string prefix = String.Format("http://{0}:{1}/", host, port);
+			
 			listener.Prefixes.Clear();
-			listener.Prefixes.Add(
-				String.Format("http://{0}:{1}/", host, port)
-			);
+			listener.Prefixes.Add(prefix);
+			
 			listener.Start();
-			Console.WriteLine("Start listener");
+			Console.WriteLine("Start listener on " + prefix);
 			workFlow.Start();
 			Console.WriteLine("Start server");
 		}
@@ -100,11 +101,7 @@ namespace Galilei
 			try {
 				while(true){
 					result = listener.BeginGetContext(new AsyncCallback(ListenerCallback), listener);
-			
-					Console.WriteLine("Waiting for request to be processed asyncronously.");
 	    			result.AsyncWaitHandle.WaitOne();    				
-		//			config.Save();
-		//			Console.WriteLine("Save config");
 				}
 			}
 			catch(ThreadAbortException)
@@ -117,8 +114,21 @@ namespace Galilei
 		{
 			HttpListener listener = (HttpListener) result.AsyncState;
     		// Call EndGetContext to complete the asynchronous operation.
-   			RestController controller = new RestController(listener.EndGetContext(result), this);
+			HttpListenerContext context = listener.EndGetContext(result);
+   			RestController controller = new RestController(context, this);
+			
+			DateTime t = DateTime.Now;
+			Console.WriteLine("Request: {0} : {1}",
+				context.Request.HttpMethod, 
+				context.Request.RawUrl);
+			
     		controller.Process();
+			
+			Console.WriteLine("Response: {0} : {1} [{2} ms]",
+				context.Response.StatusCode,
+				context.Response.StatusDescription,
+				(DateTime.Now - t).Milliseconds
+			);
 		}		
 	}
 }
