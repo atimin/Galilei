@@ -52,5 +52,7 @@ References
 =======================
 
 https://github.com/flipback/Galilei - homepage
+
 http://xpca.org - site of XPCA community 
+
 http://groups.google.com/group/xpca - XPCA google group
