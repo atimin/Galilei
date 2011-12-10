@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Galilei.Test", "Galilei.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Galilei.Simulator", "Galilei.Simulator\Galilei.Simulator.csproj", "{B790F233-E1F5-4267-A40F-1C0F1CC8C729}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9AECF230-35A5-4F48-BE9F-DEABB99C31A6}"
+	ProjectSection(SolutionItems) = preProject
+		MIT-LICENSE = MIT-LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -36,6 +42,8 @@ Global
 		{F98FE069-9661-4357-AF46-45702A431882}.Debug|x86.Build.0 = Debug|Any CPU
 		{F98FE069-9661-4357-AF46-45702A431882}.Release|x86.ActiveCfg = Release|Any CPU
 		{F98FE069-9661-4357-AF46-45702A431882}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Galilei\Galilei.csproj
