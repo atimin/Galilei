@@ -7,25 +7,25 @@ namespace Galilei.Simulator
 	[Node]
 	public class RandomPoint : Point
 	{
-		private int maxValue;
-		private int minValue;
+		private double maxValue;
+		private double minValue;
 		
 		public RandomPoint () : base()
 		{
-			minValue = 0;
-			maxValue = 100;
-			SetValue(0, DateTime.Now, Quality.Init);
+			minValue = 0.0;
+			maxValue = 100.0;
+			SetValue(0.0, DateTime.Now, Quality.Init);
 		}
 		
 		[Config]
-		public int MaxValue 
+		public double MaxValue 
 		{
 			get { return maxValue; }
 			set { maxValue = value; }
 		}
 		
 		[Config]
-		public int MinValue 
+		public double MinValue 
 		{
 			get { return minValue; }
 			set { minValue = value; }
@@ -33,7 +33,7 @@ namespace Galilei.Simulator
 		
 		public override void SetValue (object value, DateTime timestamp, Quality quality)
 		{
-			int raw = (int)value;
+			double raw = (double)value;
 			
 			if (raw >= minValue && raw <= maxValue) {
 				base.SetValue (raw, timestamp, quality);

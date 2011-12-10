@@ -16,8 +16,8 @@ namespace Galilei.Simulator
 			Random rand = new Random();
 			foreach (Point point in Points) {
 				if (point is RandomPoint) {
-					RandomPoint rPoint = point as RandomPoint;
-					rPoint.SetValue(rand.Next(rPoint.MinValue, rPoint.MaxValue));
+					RandomPoint rp = point as RandomPoint;
+					rp.SetValue(rp.MinValue + rand.NextDouble()*(rp.MaxValue - rp.MinValue));
 				}
 			}
 		}
