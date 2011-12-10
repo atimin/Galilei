@@ -25,7 +25,6 @@ namespace Galilei
     		// Obtain a response object.
     		HttpListenerResponse response = context.Response;
 			try {
-				Serializer serializer = new JsonSerializer(typeof(Node));
 				switch (request.HttpMethod) {
 					case "GET":
 						GetRespond (request, response);
@@ -43,7 +42,7 @@ namespace Galilei
 					break;
 				}
 			}
-			catch(Exception ex)
+			catch 
 			{
 				response.StatusCode = 500;
 				response.Close();

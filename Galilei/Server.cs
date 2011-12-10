@@ -24,23 +24,7 @@ namespace Galilei
 			host = "127.0.0.1";
 			port = 3001;
 			
-			// Get types
-			xpcaTypes = new List<Type>();
-			xpcaTypes.AddRange(Assembly.GetAssembly(typeof(Node)).GetTypes());
-				xpcaTypes.AddRange(Assembly.GetAssembly(typeof(Galilei.Simulator.Simulator)).GetTypes());
-			xpcaTypes.AddRange(Assembly.GetExecutingAssembly().GetTypes());
-			
-			xpcaTypes.RemoveAll(delegate(Type type) {
-				object o = Array.Find(type.GetCustomAttributes(false), delegate(object attr) {
-					return attr is NodeAttribute;
-				});
-				
-				return o == null;
-			});
-			
-			foreach (Type t in xpcaTypes) {
-				Console.WriteLine(t.Name);
-			}
+			GetTypes();
 			
 			config = new Configurator("config.json", this);
 			
@@ -65,12 +49,20 @@ namespace Galilei
 			set { port = value; }
 		}
 		
-		public List<Type> Types
+		[Property]
+		public string[] XpcaTypes
 		{
 			get 
 			{ 
-				return xpcaTypes;
-			} 
+				return Array.ConvertAll<Type, string>(Types.ToArray(),delegate(Type t) {
+					return t.Name;
+				});
+			}
+		}
+		
+		public List<Type> Types
+		{
+			get { return xpcaTypes;	} 
 		}
 		
 		
@@ -130,6 +122,31 @@ namespace Galilei
 				(DateTime.Now - t).Milliseconds
 			);
 		}		
+
+		void GetTypes()
+		{
+			xpcaTypes = new List<Type>(Assembly.GetExecutingAssembly().GetTypes());
+			
+			string[] assemblies = Directory.GetFiles(Directory.GetCurrentDirectory(), "Galilei.*.dll");
+			
+			
+			foreach (string a in assemblies){
+				Console.WriteLine("Load types form {0}", a);
+				xpcaTypes.AddRange(Assembly.LoadFile(a).GetTypes());
+			}
+			
+			xpcaTypes.RemoveAll(delegate(Type type) {
+				object o = Array.Find(type.GetCustomAttributes(false), delegate(object attr) {
+					return attr is NodeAttribute;
+				});
+				
+				return o == null;
+			});
+			
+			Console.WriteLine("Found XPCA types:");
+			foreach (Type t in xpcaTypes) {
+				Console.WriteLine(t.Name);
+			}
+		}
 	}
 }
-
