@@ -14,6 +14,7 @@ namespace Galilei.Simulator
 		{
 			minValue = 0;
 			maxValue = 100;
+			SetValue(0, DateTime.Now, Quality.Init);
 		}
 		
 		[Config]
