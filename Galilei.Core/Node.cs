@@ -15,26 +15,6 @@ namespace Galilei.Core
 		protected Node parent;
 		protected Root root;
 		
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Galilei.Core.Node"/> class.
-		/// </summary>
-		public Node() : this("New node") {}
-		
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Galilei.Core.Node"/> class.
-		/// </summary>
-		/// <param name='name'>
-		/// Name.
-		/// </param>
-		public Node(string name)
-		{
-			this.name = name;
-		}
-		
-		public Root Root {
-			get { return root; }
-		}
-		
 		[Config("Name of node")]
 		public string Name 
 		{
@@ -64,6 +44,32 @@ namespace Galilei.Core
 			}
 		}		
 		
+		[Property("Collection of children nodes")]
+		public Node[] Children 
+		{
+			get { return children.ToArray(); }
+		}
+		
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Galilei.Core.Node"/> class.
+		/// </summary>
+		public Node() : this("New node") {}
+		
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Galilei.Core.Node"/> class.
+		/// </summary>
+		/// <param name='name'>
+		/// Name.
+		/// </param>
+		public Node(string name)
+		{
+			this.name = name;
+		}
+		
+		public Root Root {
+			get { return root; }
+		}
+		
 		public string FullName
 		{
 			get
@@ -80,12 +86,6 @@ namespace Galilei.Core
 				
 				return fullName;
 			}
-		}
-		
-		[Property("Collection of children nodes")]
-		public Node[] Children 
-		{
-			get { return children.ToArray(); }
 		}
 		
 		public virtual void OnChange() {}

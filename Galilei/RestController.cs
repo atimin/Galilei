@@ -127,8 +127,8 @@ namespace Galilei
 						}
 					}
 				
-					node.Name = name;
-					node.Parent = parent;
+					parms.Add("name", name);
+					parms.Add("parent", "xpca:/" + parent.FullName);
 					response.StatusCode = 201;
 				} 
 				else {
@@ -166,7 +166,8 @@ namespace Galilei
 			Node node = srv[request.RawUrl];
 			
 			if (node != null) {
-				node.Parent = null;
+				Accessor accessor = new Accessor(node.GetType());
+				accessor.SetValue("parent", node, null);				
 				response.StatusCode = 200;
 			}
 			else {
