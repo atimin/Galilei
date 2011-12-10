@@ -7,3 +7,4 @@
 *.resources
 test-results/
 bin/
+TestResult.xml
