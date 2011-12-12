@@ -8,27 +8,25 @@ namespace Galilei.Core
 {
 	public class XmlSerializer : Serializer
 	{
-		public XmlSerializer(Type type) : base(type)
+		public XmlSerializer(Node node) : base(node)
 		{
 		}
 		
-		public override string Serialize(Node target, Type type)
+		public override string Serialize(Type typeAttr)
 		{
 			StringWriter sw = new StringWriter();
 			using(XmlWriter xmlWriter = new XmlTextWriter(sw))
 			{
 				xmlWriter.WriteProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
 				xmlWriter.WriteStartElement("root");
-				xmlWriter.WriteElementString("type", accessor.Type);
-				foreach (KeyValuePair<string, PropertyInfo> property in accessor.Properties) {
-					if (!type.IsAssignableFrom( accessor.GetAttribute(property.Value).GetType()))
-						continue;
+				xmlWriter.WriteElementString("type", proxy.Type);
+				foreach (KeyValuePair<string, PropertyInfo> property in proxy.GetPropertiesFor(typeAttr)) {
 					
-					object val = property.Value.GetValue(target, null);
-					if (val != null) {	
+					object value = proxy[property.Key];
+					if (value != null) {	
 						xmlWriter.WriteStartElement(property.Key);	
-						if(val is IEnumerable<object>) {								
-							foreach (object obj in (val as IEnumerable<object>)) {
+						if(value is IEnumerable<object>) {								
+							foreach (object obj in (value as IEnumerable<object>)) {
 								xmlWriter.WriteStartElement("item");
 								XmlWriteValue(xmlWriter, obj);
 								xmlWriter.WriteEndElement();
@@ -36,7 +34,7 @@ namespace Galilei.Core
 						
 						}
 						else {
-							XmlWriteValue(xmlWriter, val);
+							XmlWriteValue(xmlWriter, value);
 						}
 						xmlWriter.WriteEndElement();
 					}
@@ -47,7 +45,7 @@ namespace Galilei.Core
 			return sw.ToString();
 		}
 				
-		public override void Deserialize(string data, Node node)
+		public override void Deserialize(string data)
 		{
 			TextReader tr = new StringReader(data);
 			Dictionary<string, object> properties = new Dictionary<string, object>();
@@ -79,7 +77,7 @@ namespace Galilei.Core
 				} while(xmlReader.Read());								
 			}
 			
-			UpdateNode (node, properties);
+			UpdateNode (properties);
 		}
 		
 				

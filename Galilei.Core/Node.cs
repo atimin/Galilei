@@ -87,9 +87,5 @@ namespace Galilei.Core
 				return fullName;
 			}
 		}
-		
-		public virtual void OnChange() {}
-		
-		public virtual void OnConfig() {}
 	}
 }

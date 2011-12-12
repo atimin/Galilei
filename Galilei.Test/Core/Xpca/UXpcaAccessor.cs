@@ -23,69 +23,68 @@ namespace Galilei.Core.Test.Xpca
 			get { return config; }
 			set { config = value; }
 		}
-		
-		
-		public override void OnChange()
-		{
-			isChanged = true;
-		}
-		
-		public override void OnConfig ()
-		{
-			isConfiged = true;
-		}
 	}
 	
 	[TestFixture]
 	public class UXpcaAccessor
 	{
-		private Accessor accessor;
+		private XpcaProxy proxy;
 		private TestNode node;
 		
 		[SetUp]
 		public void SetUp()
 		{
-			accessor = new Accessor(typeof(TestNode));
 			node = new TestNode();
+			
+			proxy = new XpcaProxy(node);
+			proxy.ConfigChange += new EventHandler<ChangeEventArgs>(OnConfig);
 		}
 		
 		[Test]
 		public void TestGetValue()
 		{
-			Assert.AreEqual(accessor.GetValue("name", node), node.Name);
+			Assert.AreEqual(proxy["name"], node.Name);
 		}
 		
 		[Test]
 		public void TestSetValue()
 		{
-			accessor.SetValue("name", node, "new_name");
+			proxy["name"] = "new_name";
 			Assert.AreEqual("new_name", node.Name);
 		}
 		
-		[Test]
-		public void TestSetValueWithOnChange()
-		{
-			Assert.IsFalse(node.isChanged);
-			Assert.IsFalse(node.isConfiged);
-			
-			accessor.SetValue("prop", node, 1);
-			
-			Assert.AreEqual(1, node.Prop);
-			Assert.IsTrue(node.isChanged);
-			Assert.IsFalse(node.isConfiged);
-		}
+//		[Test]
+//		public void TestSetValueWithOnChange()
+//		{
+//			Assert.IsFalse(node.isChanged);
+//			Assert.IsFalse(node.isConfiged);
+//			
+//			proxy["prop"] = 1;
+//			
+//			Assert.AreEqual(1, node.Prop);
+//			Assert.IsTrue(node.isChanged);
+//			Assert.IsFalse(node.isConfiged);
+//		}
 		
 		[Test]
 		public void TestSetValueWithOnConfig()
 		{
-			Assert.IsFalse(node.isChanged);
+//			Assert.IsFalse(node.isChanged);
 			Assert.IsFalse(node.isConfiged);
 			
-			accessor.SetValue("config", node, 1);
+			proxy["config"] = 1;
 			
 			Assert.AreEqual(1, node.Config);
-			Assert.IsTrue(node.isChanged);
+//			Assert.IsTrue(node.isChanged);
 			Assert.IsTrue(node.isConfiged);
+		}
+		
+		private void OnConfig(object sender, ChangeEventArgs e)
+		{
+			XpcaProxy proxy = sender as XpcaProxy;
+			TestNode node = proxy.Node as TestNode;
+			
+			node.isConfiged = true;
 		}
 	}
 }

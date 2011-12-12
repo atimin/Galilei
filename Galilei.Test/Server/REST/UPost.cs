@@ -93,7 +93,7 @@ namespace Galilei.Test
 		[Test()]
 		public void PostWithTypes()
 		{
-			HttpWebResponse response = Helper.Post("http://127.0.0.1:3002/test_node/test_node_1", 
+			HttpWebResponse response = Helper.Post("http://127.0.0.1:3002/test_node_1", 
 				"type=TestNode" 
 				+ "&floatAttr=1.99" 
 			    + "&intAttr=99999" 
@@ -103,7 +103,7 @@ namespace Galilei.Test
 			
 			Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
 			
-			response = Helper.Get("http://127.0.0.1:3002/test_node/test_node_1");
+			response = Helper.Get("http://127.0.0.1:3002/test_node_1");
 			
 			Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 			Assert.AreEqual("application/json", response.ContentType);

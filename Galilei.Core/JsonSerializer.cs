@@ -8,11 +8,11 @@ namespace Galilei.Core
 {
 	public class JsonSerializer : Serializer
 	{
-		public JsonSerializer(Type type) : base(type)
+		public JsonSerializer(Node node) : base(node)
 		{
 		}
 				
-		public override string Serialize(Node node, Type type)
+		public override string Serialize(Type typeAttr)
 		{
 			StringWriter sw = new StringWriter();
 			using(JsonWriter jsonWriter = new JsonTextWriter(sw))
@@ -20,27 +20,24 @@ namespace Galilei.Core
 				jsonWriter.Formatting = Newtonsoft.Json.Formatting.None;
 				jsonWriter.WriteStartObject();
 				jsonWriter.WritePropertyName("type");
-				jsonWriter.WriteValue(accessor.Type);
+				jsonWriter.WriteValue(proxy.Type);
 				
-				foreach (KeyValuePair<string, PropertyInfo> property in accessor.Properties) {
-					if (!type.IsAssignableFrom(accessor.GetAttribute(property.Value).GetType()))
-						continue;
+				foreach (KeyValuePair<string, PropertyInfo> property in proxy.GetPropertiesFor(typeAttr)) {
+					object value = proxy[property.Key];
 					
-					object val = property.Value.GetValue(node, null);
-					
-					if (val != null) {
+					if (value != null) {
 						jsonWriter.WritePropertyName(property.Key);
-						if(val is IEnumerable<object>) {
+						if(value is IEnumerable<object>) {
 							jsonWriter.WriteStartArray();
 							
-							foreach (object obj in (val as IEnumerable<object>)) {
+							foreach (object obj in (value as IEnumerable<object>)) {
 								JsonWriteValue(jsonWriter, obj);
 							}
 							
 							jsonWriter.WriteEndArray();
 						}
 						else {							
-							JsonWriteValue(jsonWriter, val);
+							JsonWriteValue(jsonWriter, value);
 						}
 					}
 				}
@@ -50,7 +47,7 @@ namespace Galilei.Core
 			return sw.ToString();
 		}			
 		
-		public override void Deserialize(string data, Node node)
+		public override void Deserialize(string data)
 		{
 			TextReader tr = new StringReader(data);
 			Dictionary<string, object> properties = new Dictionary<string, object>();
@@ -83,7 +80,7 @@ namespace Galilei.Core
 				}
 			}
 			
-			UpdateNode (node, properties);
+			UpdateNode (properties);
 		}
 		
 		private void JsonWriteValue(JsonWriter jsonWriter, object value)

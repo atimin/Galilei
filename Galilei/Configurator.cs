@@ -45,21 +45,21 @@ namespace Galilei
 			jsonWriter.Formatting = Formatting.Indented;
 			
 			jsonWriter.WriteStartObject();
-			Accessor xpcaAccessor = new Accessor(node.GetType());
+			XpcaProxy proxy = new XpcaProxy(node);
 			
-			foreach (KeyValuePair<string, PropertyInfo> property in xpcaAccessor.Properties) {
-//				if ((int)(xpcaAccessor.GetXpcaAttribute(property.Value).Options & XpcaPropertyOptions.Config) == 0)
-//						continue;
+			foreach (KeyValuePair<string, PropertyInfo> property in proxy.Properties) {
+					if (!typeof(ConfigAttribute).IsAssignableFrom(proxy.GetAttribute(property.Value).GetType()))
+						continue;
 				
-				object val = property.Value.GetValue(node, null);
+				object value = proxy[property.Key];
 					
-				if (val != null) {
+				if (value != null) {
 					jsonWriter.WritePropertyName(property.Key);
-					if(val is Node) {
-						jsonWriter.WriteValue(((Node)val).FullName);
+					if(value is Node) {
+						jsonWriter.WriteValue(((Node)value).FullName);
 					}
 					else {							
-						jsonWriter.WriteValue(val.ToString());
+						jsonWriter.WriteValue(value.ToString());
 					}
 				}
 			}

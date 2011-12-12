@@ -18,7 +18,7 @@ namespace Galilei.Core.Test.Xpca
 			root["/"] = new Node("node_1");
 			root["/node_1"] = new Node("node_2");
 			
-			serializer = new JsonSerializer(typeof(Node));
+			serializer = new JsonSerializer(root["/node_1"]);
 		}
 		
 		[Test]
@@ -30,7 +30,7 @@ namespace Galilei.Core.Test.Xpca
 				"\"name\":\"node_1\"," + 
 				"\"parent\":\"xpca://\"," +
 				"\"children\":[\"xpca://node_1/node_2\"]}",
-				serializer.Serialize(root["/node_1"])
+				serializer.Serialize()
 			);
 		}
 		
@@ -42,7 +42,7 @@ namespace Galilei.Core.Test.Xpca
 				"{\"type\":\"Node\"," +
 				"\"name\":\"node_1\"," +
 				"\"parent\":\"xpca://\"}",
-				serializer.Serialize(root["/node_1"], typeof(ConfigAttribute))
+				serializer.Serialize(typeof(ConfigAttribute))
 			);
 		}
 
@@ -55,7 +55,8 @@ namespace Galilei.Core.Test.Xpca
 			root.Add("/", new Node("test"));
 			
 			Assert.IsNull(root["/node_1/node_3"]);
-			serializer.Deserialize(data, root["/test"]);
+			serializer = new JsonSerializer(root["/test"]);
+			serializer.Deserialize(data);
 			Assert.IsNotNull(root["/node_1/node_3"]);
 		}
 	}

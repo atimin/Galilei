@@ -70,12 +70,12 @@ namespace Galilei
 			Serializer serializer = null;
 			switch (format) {
 			case "json":
-				serializer = new JsonSerializer(node.GetType());
+				serializer = new JsonSerializer(node);
 				response.ContentType = "application/json";
 
 			break;
 			case "xml":
-				serializer = new XmlSerializer(node.GetType());
+				serializer = new XmlSerializer(node);
 				response.ContentType = "application/xml";
 			break;
 			default:
@@ -84,7 +84,7 @@ namespace Galilei
 			}
 			
 			if (response.StatusCode == 200) {
-				string data = serializer.Serialize(node);
+				string data = serializer.Serialize();
 				byte[] buffer = System.Text.Encoding.UTF8.GetBytes(data);
 				response.ContentLength64 = buffer.Length;
 				response.OutputStream.Write(buffer, 0, buffer.Length);
@@ -165,8 +165,8 @@ namespace Galilei
 			Node node = srv[request.RawUrl];
 			
 			if (node != null) {
-				Accessor accessor = new Accessor(node.GetType());
-				accessor.SetValue("parent", node, null);				
+				XpcaProxy proxy = new XpcaProxy(node);
+				proxy["parent"] = null;				
 				response.StatusCode = 200;
 			}
 			else {
@@ -178,10 +178,10 @@ namespace Galilei
 
 		void UpdateNode(NameValueCollection parms, Node node)
 		{
-			Accessor accessor = new Accessor(node.GetType());
+			XpcaProxy proxy = new XpcaProxy(node);
 			foreach (string name in parms.AllKeys) {
-				if (accessor.Properties.ContainsKey(name)) {
-					Type type = accessor.Properties[name].PropertyType;
+				if (proxy.Properties.ContainsKey(name)) {
+					Type type = proxy.Properties[name].PropertyType;
 					object val = parms[name];
 					// Get node by ref
 					if (typeof(Node).IsAssignableFrom(type)) {
@@ -200,7 +200,7 @@ namespace Galilei
 						}
 					}
 					
-					accessor.SetValue(name, node, val);
+					proxy[name] = val;
 				}
 			}
 		}		

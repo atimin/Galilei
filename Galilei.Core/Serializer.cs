@@ -6,32 +6,30 @@ namespace Galilei.Core
 {
 	abstract public class Serializer
 	{
-		protected Accessor accessor;
+		protected XpcaProxy proxy;
 		
-		public Serializer(Type type)
+		public Serializer(Node node)
 		{
-			accessor = new Accessor(type);
+			proxy = new XpcaProxy(node);
 		}
 		
-		public string Serialize(Node target)
+		public string Serialize()
 		{
-			return Serialize(target, 
-				typeof(PropertyAttribute)
-			);
+			return Serialize(typeof(PropertyAttribute));
 		}
 		
-		abstract public string Serialize(Node node, Type type);
-		abstract public void Deserialize(string data, Node node);
+		abstract public string Serialize(Type typeAttr);
+		abstract public void Deserialize(string data);
 
-		protected void UpdateNode (Node node, Dictionary<string, object> properties)
+		protected void UpdateNode (Dictionary<string, object> properties)
 		{
 			//Set properties
 			foreach (KeyValuePair<string, object> property in properties) {
-				object val = property.Value;
-				if (val.ToString().IndexOf("xpca:/") > -1) {
-					val = node.Root[val.ToString().Replace("xpca:/", "")];
+				object value = property.Value;
+				if (value.ToString().IndexOf("xpca:/") > -1) {
+					value = proxy.Node.Root[value.ToString().Replace("xpca:/", "")];
 				}
-				accessor.SetValue(property.Key, node, val);
+				proxy[property.Key] = value;
 			}
 		}
 	}

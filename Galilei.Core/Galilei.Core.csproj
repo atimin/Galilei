@@ -38,7 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Accessor.cs" />
     <Compile Include="ConfigAttribute.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="JsonSerializer.cs" />
@@ -50,6 +49,8 @@
     <Compile Include="Root.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="XmlSerializer.cs" />
+    <Compile Include="XpcaProxy.cs" />
+    <Compile Include="ChangeEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
