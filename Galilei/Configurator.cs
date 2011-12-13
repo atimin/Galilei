@@ -47,9 +47,7 @@ namespace Galilei
 			jsonWriter.WriteStartObject();
 			XpcaProxy proxy = new XpcaProxy(node);
 			
-			foreach (KeyValuePair<string, PropertyInfo> property in proxy.Properties) {
-					if (!typeof(ConfigAttribute).IsAssignableFrom(proxy.GetAttribute(property.Value).GetType()))
-						continue;
+			foreach (KeyValuePair<string, PropertyInfo> property in proxy.GetPropertiesFor(typeof(ConfigAttribute))) {
 				
 				object value = proxy[property.Key];
 					

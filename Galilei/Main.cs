@@ -10,9 +10,9 @@ namespace Galilei
 	{
 		public static void Main (string[] args)
 		{	
-			Server srv = new Server();
+			Galilei galilei = new Galilei(new Server());
 			
-			srv.Start();			
+			galilei.Start();			
 			
 			Console.ReadKey();
 		}

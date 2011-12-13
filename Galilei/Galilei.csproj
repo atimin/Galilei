@@ -35,7 +35,7 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Web" />
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Newtonsoft.Json, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -43,8 +43,8 @@
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Configurator.cs" />
-    <Compile Include="RestController.cs" />
     <Compile Include="Server.cs" />
+    <Compile Include="Galilei.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -59,5 +59,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Lib\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

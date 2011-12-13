@@ -10,19 +10,21 @@ namespace Galilei.Test
 	public class UPost
 	{
 		private Server srv;
+		private Galilei galilei;
 		
 		[TestFixtureSetUp]
 		public void SetUp()
 		{
 			srv = Helper.InitServer(3002);
 	
-			srv.Start();
+			galilei = new Galilei(srv);
+			galilei.Start();
 		}
 		
 		[TestFixtureTearDown]
 		public void TearDown()
 		{
-			srv.Stop();
+			galilei.Stop();
 		}
 		
 		[Test()]

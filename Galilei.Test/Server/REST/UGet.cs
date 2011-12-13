@@ -10,24 +10,21 @@ namespace Galilei.Test
 	public class UGet
 	{
 		private Server srv;
+		private Galilei galilei;
 		
 		[TestFixtureSetUp]
 		public void SetUp()
 		{
-			srv = new Server();
-			Node node_1 = new Node("node_1");
-			Node node_2 = new Node("node_2");
-			
-			node_1.Parent = srv;
-			node_2.Parent = node_1;
-	
-			srv.Start();
+			srv = Helper.InitServer(3001);
+		
+			galilei = new Galilei(srv);
+			galilei.Start();
 		}
 		
 		[TestFixtureTearDown]
 		public void TearDown()
 		{
-			srv.Stop();
+			galilei.Stop();
 		}
 		
 		[Test()]

@@ -10,25 +10,21 @@ namespace Galilei.Test
 	public class UDelete
 	{
 		private Server srv;
+		private Galilei galilei;
 		
 		[TestFixtureSetUp]
 		public void SetUp()
 		{
-			srv = new Server();
-			srv.Port= 3004;
-			Node node_1 = new Node("node_1");
-			Node node_2 = new Node("node_2");
+			srv = Helper.InitServer(3004);
 			
-			node_1.Parent = srv;
-			node_2.Parent = node_1;
-	
-			srv.Start();
+			galilei = new Galilei(srv);
+			galilei.Start();
 		}
 		
 		[TestFixtureTearDown]
 		public void TearDown()
 		{
-			srv.Stop();
+			galilei.Stop();
 		}
 		
 		[Test()]

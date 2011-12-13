@@ -3,23 +3,82 @@ using System.Net;
 using System.Web;
 using System.Collections.Specialized;
 using System.Reflection;
+using System.Threading;
 
 using Galilei.Core;
 
 namespace Galilei
 {
-	public class RestController
+	public class Galilei
 	{
-		private HttpListenerContext context;
 		private Server srv;
+		private HttpListener listener;
+		private Thread workFlow;
 		
-		public RestController (HttpListenerContext context, Server srv)
+		public Galilei (Server srv)
 		{
-			this.context = context;
 			this.srv = srv;
+			
+			listener = new HttpListener();
+			workFlow = new Thread(new ThreadStart(WorkFlow));
 		}
 		
-		public void Process()
+		public void Start()			
+		{	
+			string prefix = String.Format("http://{0}:{1}/", srv.Host, srv.Port);
+			
+			listener.Prefixes.Clear();
+			listener.Prefixes.Add(prefix);
+			
+			listener.Start();
+			Console.WriteLine("Start listener on " + prefix);
+			workFlow.Start();
+			Console.WriteLine("Start Galilei");
+		}
+		
+		public void Stop()
+		{
+			Console.WriteLine("Stop Galilei");
+			workFlow.Abort();
+			workFlow.Join();
+		}
+		
+		private void WorkFlow()
+		{
+			IAsyncResult result = null;
+			try {
+				while(true){
+					result = listener.BeginGetContext(new AsyncCallback(ListenerCallback), listener);
+	    			result.AsyncWaitHandle.WaitOne();    				
+				}
+			}
+			catch(ThreadAbortException)
+        	{
+				Thread.ResetAbort();
+        	}
+		}
+		
+		private void ListenerCallback(IAsyncResult result)
+		{
+			HttpListener listener = (HttpListener) result.AsyncState;
+    		// Call EndGetContext to complete the asynchronous operation.
+			HttpListenerContext context = listener.EndGetContext(result);
+			
+			DateTime t = DateTime.Now;
+			Console.WriteLine("Request: {0} : {1}",
+				context.Request.HttpMethod, 
+				context.Request.RawUrl);
+			
+    		Process(context);
+			
+			Console.WriteLine("Response: {0} : {1} [{2} ms]",
+				context.Response.StatusCode,
+				context.Response.StatusDescription,
+				(DateTime.Now - t).Milliseconds
+			);
+		}	
+		
+		private void Process(HttpListenerContext context)
 		{
 			HttpListenerRequest request = context.Request;
     		// Obtain a response object.
