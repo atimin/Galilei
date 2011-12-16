@@ -51,7 +51,7 @@ namespace Galilei.Core
 					}
 					node = nextNode;
 					if (node == null) {
-						break;
+						throw new XpcaPathError(path);
 					}
 				}
 			}

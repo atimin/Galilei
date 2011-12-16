@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Net;
-
 using System.Reflection;
 using System.Collections.Generic;
 
@@ -15,7 +14,6 @@ namespace Galilei
 
 		private string host;
 		private int port;
-		private Configurator config;
 		private List<Type> xpcaTypes;
 		
 		public Server() : base()
@@ -24,10 +22,6 @@ namespace Galilei
 			port = 3001;
 			
 			GetTypes();
-			
-			config = new Configurator("config.json", this);
-			
-
 		}
 		
 		[Property]
@@ -69,10 +63,6 @@ namespace Galilei
 		{
 			get { return xpcaTypes;	} 
 		}
-		
-		
-		
-	
 
 		void GetTypes()
 		{

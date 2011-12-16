@@ -19,8 +19,6 @@ namespace Galilei.Core
 			{
 				jsonWriter.Formatting = Newtonsoft.Json.Formatting.None;
 				jsonWriter.WriteStartObject();
-				jsonWriter.WritePropertyName("type");
-				jsonWriter.WriteValue(proxy.Type);
 				
 				foreach (KeyValuePair<string, PropertyInfo> property in proxy.GetPropertiesFor(typeAttr)) {
 					object value = proxy[property.Key];

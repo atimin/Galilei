@@ -128,7 +128,7 @@ namespace Galilei.Test
 				"type=xxx");
 			
 			Assert.AreEqual(HttpStatusCode.InternalServerError, response.StatusCode);
-			Assert.AreEqual("Type `xxx` is not supported", response.StatusDescription);			                                    			                                       			                                      
+			Assert.AreEqual("Type `xxx` is not XPCA type", response.StatusDescription);			                                    			                                       			                                      
 		}
 	}
 }

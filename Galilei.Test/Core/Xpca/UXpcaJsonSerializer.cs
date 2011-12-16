@@ -54,7 +54,6 @@ namespace Galilei.Core.Test.Xpca
 			
 			root.Add("/", new Node("test"));
 			
-			Assert.IsNull(root["/node_1/node_3"]);
 			serializer = new JsonSerializer(root["/test"]);
 			serializer.Deserialize(data);
 			Assert.IsNotNull(root["/node_1/node_3"]);

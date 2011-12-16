@@ -15,6 +15,12 @@ namespace Galilei.Core
 		protected Node parent;
 		protected Root root;
 		
+		[Config("Type name of node")]
+		public string Type {
+			get { return GetType().Name; }
+			set { }
+		}
+		
 		[Config("Name of node")]
 		public string Name 
 		{

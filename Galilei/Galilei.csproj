@@ -45,6 +45,7 @@
     <Compile Include="Configurator.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Galilei.cs" />
+    <Compile Include="TreeBuilder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -59,10 +60,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Lib\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

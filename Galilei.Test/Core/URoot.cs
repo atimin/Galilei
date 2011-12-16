@@ -54,7 +54,14 @@ namespace Galilei.Core.Test
 		public void TestRemove()
 		{
 			root.Remove("/node_1/node_2");
-			Assert.IsNull(root.Get("/node_1/node_2"));
+
+			try {
+				root.Get("/node_1/node_2");
+			}
+			catch(XpcaPathError e)
+			{
+				Assert.AreEqual(e.Message, "Node has not found by `/node_1/node_2`");
+			}
 		}
 		
 		[Test]
@@ -72,7 +79,14 @@ namespace Galilei.Core.Test
 			root["/node_1"] = node_3;
 			Assert.AreEqual(node_3, root["/node_1/node_3"]);
 			root["/node_1/node_3"] = null;
-			Assert.IsNull(root["/node_1/node_3"]);
+			
+			try {
+				Node node = root["/node_1/node_3"];
+			}
+			catch(XpcaPathError e)
+			{
+				Assert.AreEqual(e.Message, "Node has not found by `/node_1/node_3`");
+			}
 		}
 		
 		[Test]

@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Web;
 using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 
@@ -14,19 +15,30 @@ namespace Galilei
 		private Server srv;
 		private HttpListener listener;
 		private Thread workFlow;
+		private Configurator config;
+		private TreeBuilder builder;
+		private Queue<Node> queueToSave;
 		
 		public Galilei (Server srv)
 		{
-			this.srv = srv;
+			this.srv = srv;					
+			config = new Configurator("galilei.conf", srv);
+			
+			builder = new TreeBuilder(srv);
+			builder.ConfigChange += new TreeBuilder.ConfigChangeHandler(OnConfig);
+			
+			queueToSave = new Queue<Node>();
 			
 			listener = new HttpListener();
 			workFlow = new Thread(new ThreadStart(WorkFlow));
 		}
-		
+		 
 		public void Start()			
 		{	
-			string prefix = String.Format("http://{0}:{1}/", srv.Host, srv.Port);
+			config.Load();
+			Console.WriteLine("Load config");
 			
+			string prefix = String.Format("http://{0}:{1}/", srv.Host, srv.Port);
 			listener.Prefixes.Clear();
 			listener.Prefixes.Add(prefix);
 			
@@ -41,6 +53,7 @@ namespace Galilei
 			Console.WriteLine("Stop Galilei");
 			workFlow.Abort();
 			workFlow.Join();
+			
 		}
 		
 		private void WorkFlow()
@@ -49,7 +62,18 @@ namespace Galilei
 			try {
 				while(true){
 					result = listener.BeginGetContext(new AsyncCallback(ListenerCallback), listener);
-	    			result.AsyncWaitHandle.WaitOne();    				
+	    			result.AsyncWaitHandle.WaitOne(); 
+					
+					// Save changes
+					if (queueToSave.Count > 0) {
+						while(queueToSave.Count > 0) {
+							Console.WriteLine("Config changes in node:{0}", 
+							                   queueToSave.Dequeue().FullName
+							);	
+						}
+						config.Save();
+						Console.WriteLine("Save config");
+					}
 				}
 			}
 			catch(ThreadAbortException)
@@ -101,9 +125,19 @@ namespace Galilei
 					break;
 				}
 			}
-			catch 
-			{
+			catch(XpcaTypeError ex) {
 				response.StatusCode = 500;
+				response.StatusDescription = ex.Message;
+			}
+			catch(XpcaPathError ex) {
+				response.StatusCode = 400;
+				response.StatusDescription = ex.Message;
+			}
+			catch {
+				response.StatusCode = 500;
+
+			}
+			finally	{
 				response.Close();
 			}
 		}
@@ -118,13 +152,6 @@ namespace Galilei
 			}
 						
 			Node node = srv[url];
-			
-			if (node == null)
-			{
-				response.StatusCode = 400;
-				response.Close();
-				return;
-			}
 			
 			Serializer serializer = null;
 			switch (format) {
@@ -150,119 +177,33 @@ namespace Galilei
 				response.OutputStream.Flush();
 				response.OutputStream.Close();
 			}
-			
-			response.Close();
 		}
 				
 		void PostRespond (HttpListenerRequest request, HttpListenerResponse response)
 		{
-			NameValueCollection parms = GetParams(request);
-			
-			Node node = srv[request.RawUrl];
-			if (node == null) {
-				// Make new node
-				string[] splitUrl = request.RawUrl.Split('/');
-				string name = splitUrl[splitUrl.Length -1];
-				string parentPath = String.Join("/", splitUrl, 0, splitUrl.Length - 1);
-				Node parent = srv[parentPath];
-				
-				if (parent != null) {
-					if (parms["type"] == null) {
-						node = new Node(name);
-					} 
-					else {					
-							Type type = srv.Types.Find(delegate (Type t) {
-								return t.Name == parms["type"];
-							});
-						if (type != null) {
-							node = Activator.CreateInstance(type, new object[] {}) as Node;
-						} 
-						else {
-							response.StatusCode = 500;
-							response.StatusDescription = "Type `" + parms["type"] +"` is not supported";
-							response.Close();
-							return;
-						}
-					}
-				
-					parms.Add("name", name);
-					parms.Add("parent", "xpca:/" + parent.FullName);
-					response.StatusCode = 201;
-				} 
-				else {
-					response.StatusCode = 400;
-					response.Close();
-					return;
-				}
-				
-			}
-		
-			UpdateNode(parms, node);
-										
-			if (response.StatusCode != 201)
+			NameValueCollection parms =  GetParams(request);
+			try {
+				builder.Update(request.RawUrl, parms);
 				response.StatusCode = 200;
-			
-			response.Close();
+			} 
+			catch (XpcaPathError) {
+				builder.Build(request.RawUrl, parms);	
+				response.StatusCode = 201;
+			}
 		}
 
 		void PutRespond (HttpListenerRequest request, HttpListenerResponse response)
-		{
-			Node node = srv[request.RawUrl];
-			if (node == null) {
-				response.StatusCode = 400;
-				response.Close();
-				return;				
-			}
-			
-			UpdateNode(GetParams(request), node);
-
-			response.Close();
+		{	
+			builder.Update(request.RawUrl, GetParams(request));
+			response.StatusCode = 200;
 		}
 
 		void DeleteRespond (HttpListenerRequest request, HttpListenerResponse response)
 		{
-			Node node = srv[request.RawUrl];
-			
-			if (node != null) {
-				XpcaProxy proxy = new XpcaProxy(node);
-				proxy["parent"] = null;				
-				response.StatusCode = 200;
-			}
-			else {
-				response.StatusCode = 400;
-			}
-			
-			response.Close();
+			builder.Delete(request.RawUrl);			
+			response.StatusCode = 200;
 		}
 
-		void UpdateNode(NameValueCollection parms, Node node)
-		{
-			XpcaProxy proxy = new XpcaProxy(node);
-			foreach (string name in parms.AllKeys) {
-				if (proxy.Properties.ContainsKey(name)) {
-					Type type = proxy.Properties[name].PropertyType;
-					object val = parms[name];
-					// Get node by ref
-					if (typeof(Node).IsAssignableFrom(type)) {
-						val = srv[val.ToString().Replace("xpca:/","")];
-					}
-					else {
-						try {
-							val = type.InvokeMember("Parse", 
-								BindingFlags.Static | BindingFlags.InvokeMethod | BindingFlags.Public,
-								null,
-								type,
-								new object[] {val});
-						}
-						catch {
-							val = val.ToString();	
-						}
-					}
-					
-					proxy[name] = val;
-				}
-			}
-		}		
 		
 		private NameValueCollection GetParams(HttpListenerRequest request)
 		{
@@ -273,6 +214,10 @@ namespace Galilei
 			return HttpUtility.ParseQueryString(data);
 		}
 		
+		private void OnConfig(Node node)
+		{
+			queueToSave.Enqueue(node);
+		}
 	}
 }
 

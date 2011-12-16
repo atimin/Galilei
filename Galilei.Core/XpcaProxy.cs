@@ -29,7 +29,7 @@ namespace Galilei.Core
 				typeName = node.GetType().Name;
 			}
 			else {
-				throw new Exception("Type: " + node.GetType().FullName + " is not XPCA node");
+				throw new XpcaTypeError(node.GetType().Name);
 			}
 			
 			// Getting XPCA properties from type

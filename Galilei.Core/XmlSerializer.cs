@@ -19,7 +19,6 @@ namespace Galilei.Core
 			{
 				xmlWriter.WriteProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
 				xmlWriter.WriteStartElement("root");
-				xmlWriter.WriteElementString("type", proxy.Type);
 				foreach (KeyValuePair<string, PropertyInfo> property in proxy.GetPropertiesFor(typeAttr)) {
 					
 					object value = proxy[property.Key];

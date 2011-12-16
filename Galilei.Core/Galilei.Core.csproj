@@ -51,6 +51,9 @@
     <Compile Include="XmlSerializer.cs" />
     <Compile Include="XpcaProxy.cs" />
     <Compile Include="ChangeEventArgs.cs" />
+    <Compile Include="XpcaError.cs" />
+    <Compile Include="XpcaTypeError.cs" />
+    <Compile Include="XpcaPathError.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

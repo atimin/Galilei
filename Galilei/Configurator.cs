@@ -1,11 +1,13 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Collections.Specialized;
 using System.Collections.Generic;
-
-using Galilei.Core;
+using System.Text.RegularExpressions;
 
 using Newtonsoft.Json;
+
+using Galilei.Core;
 
 namespace Galilei
 {
@@ -25,7 +27,10 @@ namespace Galilei
 			StreamWriter file = File.CreateText(configPath);
 			using (JsonTextWriter jsonWriter = new JsonTextWriter(file))
 			{
-				SaveNode(jsonWriter, srv);
+				jsonWriter.WriteStartObject();
+				Save(srv, jsonWriter);
+				jsonWriter.WriteEndObject();
+				jsonWriter.Close();
 			}
 			file.Close();
 		}
@@ -33,28 +38,59 @@ namespace Galilei
 		public void Load()
 		{
 			StreamReader file = File.OpenText(configPath);
-			
-			using (JsonTextReader jsonReader = new JsonTextReader(file))
+			using(JsonTextReader jsonReader = new JsonTextReader(file))
 			{
-				
+				while(jsonReader.Read()) {
+					if (jsonReader.TokenType == JsonToken.PropertyName) {
+						string fullName = (string)jsonReader.Value;
+						
+						if (jsonReader.Read() 
+						    && jsonReader.TokenType == JsonToken.StartObject) {
+						
+							NameValueCollection parms = new NameValueCollection();
+							while(jsonReader.Read()
+							      && jsonReader.TokenType != JsonToken.EndObject) {
+						
+								if (jsonReader.TokenType == JsonToken.PropertyName) {
+									string key = (string)jsonReader.Value;
+									
+									if (jsonReader.Read()) {
+										string value = (String)jsonReader.Value;
+										parms.Add(key, value);
+									}
+									
+								}
+							}
+							
+							TreeBuilder builder = new TreeBuilder(srv);
+							try {
+								builder.Update(fullName, parms);
+							} 
+							catch (XpcaPathError) {
+								builder.Build(fullName, parms);
+							}
+						}
+					}
+				}
 			}
+			file.Close();
 		}
 		
-		private void SaveNode(JsonTextWriter jsonWriter, Node node)
-		{			
+		private void Save(Node node, JsonTextWriter jsonWriter)
+		{
 			jsonWriter.Formatting = Formatting.Indented;
-			
+			jsonWriter.WritePropertyName(node.FullName);
 			jsonWriter.WriteStartObject();
 			XpcaProxy proxy = new XpcaProxy(node);
-			
+		
 			foreach (KeyValuePair<string, PropertyInfo> property in proxy.GetPropertiesFor(typeof(ConfigAttribute))) {
 				
 				object value = proxy[property.Key];
 					
-				if (value != null) {
+				if (value != null ) {
 					jsonWriter.WritePropertyName(property.Key);
 					if(value is Node) {
-						jsonWriter.WriteValue(((Node)value).FullName);
+						jsonWriter.WriteValue("xpca:/" + ((Node)value).FullName);
 					}
 					else {							
 						jsonWriter.WriteValue(value.ToString());
@@ -62,47 +98,10 @@ namespace Galilei
 				}
 			}
 			
-			jsonWriter.WritePropertyName("children");
-			jsonWriter.WriteStartArray();
-			foreach (Node child in node.Children) {
-				SaveNode(jsonWriter, child);
-			}
-			jsonWriter.WriteEndArray();
-			
 			jsonWriter.WriteEndObject();
-		}
-		
-		private void LoadNode(JsonTextReader jsonReader, Node node)
-		{
-			if (jsonReader.Read()
-				|| jsonReader.TokenType == JsonToken.StartObject) {
-//				Dictionary<string, object> properties = new Dictionary<string, object>();
-//				
-//				xmlWriter.WriteStartElement("root");
-//				while(jsonReader.Read()) {
-//					switch (jsonReader.TokenType) {
-//					case JsonToken.PropertyName:
-//					case JsonToken.String:
-//					case JsonToken.Boolean:
-//					case JsonToken.Date:
-//					case JsonToken.Integer:
-//						if (name == "parent")
-//						{
-//								
-//						} 
-//						else {
-//							properties.Add(name, jsonReader.Value);
-//						}
-//						break;
-//					case JsonToken.StartArray:
-//						List<object> objs = new List<object>();
-//						while(jsonReader.Read() && jsonReader.TokenType != JsonToken.EndArray) {
-//							objs.Add(jsonReader.Value);
-//						}
-//						properties.Add(name, objs.ToArray());
-//						break;
-//					}
-//				}
+			
+			foreach(Node ch in node.Children) {
+				Save(ch, jsonWriter);
 			}
 		}
 	}
