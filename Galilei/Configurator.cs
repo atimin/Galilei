@@ -37,6 +37,9 @@ namespace Galilei
 		
 		public void Load()
 		{
+			if (!File.Exists(configPath))
+			   return;
+			
 			StreamReader file = File.OpenText(configPath);
 			using(JsonTextReader jsonReader = new JsonTextReader(file))
 			{

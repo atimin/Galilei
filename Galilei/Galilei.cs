@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using System.Timers;
 
 using Galilei.Core;
 
@@ -18,6 +19,7 @@ namespace Galilei
 		private Configurator config;
 		private TreeBuilder builder;
 		private Queue<Node> queueToSave;
+		private System.Timers.Timer saveTimer;
 		
 		public Galilei (Server srv)
 		{
@@ -35,12 +37,16 @@ namespace Galilei
 		 
 		public void Start()			
 		{	
+			Console.Write("Load config....");
 			config.Load();
-			Console.WriteLine("Load config");
+			Console.WriteLine("  Ok");
 			
 			string prefix = String.Format("http://{0}:{1}/", srv.Host, srv.Port);
 			listener.Prefixes.Clear();
 			listener.Prefixes.Add(prefix);
+			
+			saveTimer = new System.Timers.Timer(1000);
+			saveTimer.Elapsed += new System.Timers.ElapsedEventHandler(SaveConfig);
 			
 			listener.Start();
 			Console.WriteLine("Start listener on " + prefix);
@@ -59,27 +65,31 @@ namespace Galilei
 		private void WorkFlow()
 		{
 			IAsyncResult result = null;
+			
 			try {
 				while(true){
 					result = listener.BeginGetContext(new AsyncCallback(ListenerCallback), listener);
 	    			result.AsyncWaitHandle.WaitOne(); 
-					
-					// Save changes
-					if (queueToSave.Count > 0) {
-						while(queueToSave.Count > 0) {
-							Console.WriteLine("Config changes in node:{0}", 
-							                   queueToSave.Dequeue().FullName
-							);	
-						}
-						config.Save();
-						Console.WriteLine("Save config");
-					}
+	
 				}
 			}
 			catch(ThreadAbortException)
         	{
 				Thread.ResetAbort();
         	}
+		}
+		
+		private void SaveConfig(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			if (queueToSave.Count > 0) {
+				while(queueToSave.Count > 0) {
+					Console.WriteLine("Config changes in node:{0}", 
+					                   queueToSave.Dequeue().FullName
+					);	
+				}
+				config.Save();
+				Console.WriteLine("Save config");
+			}
 		}
 		
 		private void ListenerCallback(IAsyncResult result)
@@ -217,6 +227,8 @@ namespace Galilei
 		private void OnConfig(Node node)
 		{
 			queueToSave.Enqueue(node);
+			saveTimer.Stop();
+			saveTimer.Start();
 		}
 	}
 }

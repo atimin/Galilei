@@ -10,20 +10,25 @@ namespace Galilei.Test
 	{
 		private Server srv;
 		
-		[TestFixtureSetUp]
+		[SetUp]
 		public void SetUp()
 		{
-			srv = new Server();
+			this.srv = new Server();
 			
-			srv["/"] = new Node("node_1");
-			srv["/node_1"] = new Node("node_2");
+			this.srv["/"] = new Node("node_1");
+			this.srv["/node_1"] = new Node("node_2");
+			Configurator conf = new Configurator("test_config.json", this.srv);
+			conf.Save();
 		}
 		
 		[Test()]
 		public void TestLoadConfig ()
 		{
 			Server srv = new Server();
-			Assert.AreEqual(this.srv["/node_1/node_2"], srv["/node_1/node_2"]);
+			Configurator conf = new Configurator("test_config.json", srv);
+			conf.Load();
+			
+			Assert.AreEqual(this.srv["/node_1/node_2"].FullName, srv["/node_1/node_2"].FullName);
 		}
 	}
 }
