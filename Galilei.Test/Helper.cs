@@ -1,34 +1,25 @@
 using System;
 using System.Net;
 
-using Galilei;
 using Galilei.Core;
 
-namespace Galilei.Test
+namespace Galilei
 {
 	public class Helper
 	{
-		public static Server InitServer(int port)
-		{
-			Server srv = new Server();
-			srv.Types.Add(typeof(TestNode));
-			
-			srv.Port = port;
-			srv["/"] = new Node("node_1");
-			srv["/node_1"] = new Node("node_2");
-			srv["/"] = new TestNode("test_node");
-			
-			return srv;
-		}
-		public static HttpWebResponse Get(string url)
+		public delegate void ResponseHandler(HttpWebResponse response);
+		
+		public static void Get(string url, ResponseHandler handler)
 		{
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
 			request.Method = "GET";
 
-			return tryResponse(request);
+			HttpWebResponse response = TryResponse(request);
+			handler(response);
+			response.Close();
 		}
 		
-		public static HttpWebResponse Post(string url, string parametrs)
+		public static void Post(string url, string parametrs, ResponseHandler handler)
 		{
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
 			request.Method = "POST";
@@ -36,10 +27,12 @@ namespace Galilei.Test
 			request.ContentLength = System.Text.Encoding.UTF8.GetBytes(parametrs).Length;
 			WriteToStream (request.GetRequestStream(), parametrs);
 			
-			return tryResponse(request);
+			HttpWebResponse response = TryResponse(request);
+			handler(response);
+			response.Close();
 		}
 		
-		public static HttpWebResponse Put(string url, string parametrs)
+		public static void Put(string url, string parametrs, ResponseHandler handler) 
 		{
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
 			request.Method = "PUT";
@@ -47,15 +40,19 @@ namespace Galilei.Test
 			request.ContentLength = request.ContentLength = System.Text.Encoding.UTF8.GetBytes(parametrs).Length;
 			WriteToStream (request.GetRequestStream(), parametrs);
 			
-			return tryResponse(request);
+			HttpWebResponse response = TryResponse(request);
+			handler(response);
+			response.Close();
 		}
 		
-		public static HttpWebResponse Delete(string url)
+		public static void Delete(string url, ResponseHandler handler)
 		{
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
 			request.Method = "DELETE";
 
-			return tryResponse(request);
+			HttpWebResponse response = TryResponse(request);
+			handler(response);
+			response.Close();
 		}
 		
 		public static void WriteToStream(System.IO.Stream stream, string data)
@@ -75,10 +72,10 @@ namespace Galilei.Test
 			return System.Text.Encoding.UTF8.GetString(buffer);
 		}
 
-		static HttpWebResponse tryResponse(HttpWebRequest request)
+		static HttpWebResponse TryResponse(HttpWebRequest request)
 		{
 			try {
-			 	return(HttpWebResponse)request.GetResponse();
+			 	return (HttpWebResponse)request.GetResponse();
 			} 
 			catch (WebException e) {
 				return (HttpWebResponse)e.Response;

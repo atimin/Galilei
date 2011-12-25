@@ -8,13 +8,15 @@ namespace Galilei.Core
 {
 	public class JsonSerializer : Serializer
 	{
-		public JsonSerializer(Node node) : base(node)
+		public JsonSerializer(Type type) : base(type)
 		{
 		}
 				
-		public override string Serialize(Type typeAttr)
+		public override string Serialize(Node node, Type typeAttr)
 		{
+			XpcaProxy proxy = new XpcaProxy(node);
 			StringWriter sw = new StringWriter();
+			
 			using(JsonWriter jsonWriter = new JsonTextWriter(sw))
 			{
 				jsonWriter.Formatting = Newtonsoft.Json.Formatting.None;
@@ -45,7 +47,7 @@ namespace Galilei.Core
 			return sw.ToString();
 		}			
 		
-		public override void Deserialize(string data)
+		public override void Deserialize(Node node, string data)
 		{
 			TextReader tr = new StringReader(data);
 			Dictionary<string, object> properties = new Dictionary<string, object>();
@@ -78,7 +80,7 @@ namespace Galilei.Core
 				}
 			}
 			
-			UpdateNode (properties);
+			UpdateNode (node, properties);
 		}
 		
 		private void JsonWriteValue(JsonWriter jsonWriter, object value)

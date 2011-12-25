@@ -2,7 +2,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 
-namespace Galilei.Core.Test.Xpca
+namespace Galilei.Core
 {
 	
 	[TestFixture]
@@ -18,7 +18,7 @@ namespace Galilei.Core.Test.Xpca
 			root["/"] = new Node("node_1");
 			root["/node_1"] = new Node("node_2");
 			
-			serializer = new JsonSerializer(root["/node_1"]);
+			serializer = new JsonSerializer(typeof(Node));
 		}
 		
 		[Test]
@@ -30,7 +30,7 @@ namespace Galilei.Core.Test.Xpca
 				"\"name\":\"node_1\"," + 
 				"\"parent\":\"xpca://\"," +
 				"\"children\":[\"xpca://node_1/node_2\"]}",
-				serializer.Serialize()
+				serializer.Serialize(root["/node_1"])
 			);
 		}
 		
@@ -42,10 +42,10 @@ namespace Galilei.Core.Test.Xpca
 				"{\"type\":\"Node\"," +
 				"\"name\":\"node_1\"," +
 				"\"parent\":\"xpca://\"}",
-				serializer.Serialize(typeof(ConfigAttribute))
+				serializer.Serialize(root["/node_1"], typeof(ConfigAttribute))
 			);
 		}
-
+		
 		[Test]
 		public void TestDeserializeFromJson()
 		{
@@ -54,8 +54,7 @@ namespace Galilei.Core.Test.Xpca
 			
 			root.Add("/", new Node("test"));
 			
-			serializer = new JsonSerializer(root["/test"]);
-			serializer.Deserialize(data);
+			serializer.Deserialize(root["/test"], data);
 			Assert.IsNotNull(root["/node_1/node_3"]);
 		}
 	}

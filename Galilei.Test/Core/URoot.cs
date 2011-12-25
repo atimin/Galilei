@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using System;
 
-namespace Galilei.Core.Test
+namespace Galilei.Core
 {
 	[TestFixture]
 	public class URoot

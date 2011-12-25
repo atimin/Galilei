@@ -10,7 +10,7 @@ namespace Galilei
 	{
 		public static void Main (string[] args)
 		{	
-			Galilei galilei = new Galilei(new Server());
+			Galilei galilei = new Galilei("config.json");
 			
 			galilei.Start();			
 			

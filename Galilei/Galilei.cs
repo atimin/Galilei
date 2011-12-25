@@ -21,10 +21,10 @@ namespace Galilei
 		private Queue<Node> queueToSave;
 		private System.Timers.Timer saveTimer;
 		
-		public Galilei (Server srv)
+		public Galilei(string configPath)
 		{
-			this.srv = srv;					
-			config = new Configurator("galilei.conf", srv);
+			srv = new Server();					
+			config = new Configurator(configPath, srv);
 			
 			builder = new TreeBuilder(srv);
 			builder.ConfigChange += new TreeBuilder.ConfigChangeHandler(OnConfig);
@@ -57,6 +57,7 @@ namespace Galilei
 		public void Stop()
 		{
 			Console.WriteLine("Stop Galilei");
+			listener.Close();
 			workFlow.Abort();
 			workFlow.Join();
 			
@@ -68,8 +69,20 @@ namespace Galilei
 			
 			try {
 				while(true){
-					result = listener.BeginGetContext(new AsyncCallback(ListenerCallback), listener);
-	    			result.AsyncWaitHandle.WaitOne(); 
+					HttpListenerContext context = listener.GetContext();
+					
+					DateTime t = DateTime.Now;
+					Console.WriteLine("Request: {0} : {1}",
+						context.Request.HttpMethod, 
+						context.Request.RawUrl);
+					
+		    		Process(context);
+					
+					Console.WriteLine("Response: {0} : {1} [{2} ms]",
+						context.Response.StatusCode,
+						context.Response.StatusDescription,
+						(DateTime.Now - t).Milliseconds
+					);
 	
 				}
 			}
@@ -91,26 +104,6 @@ namespace Galilei
 				Console.WriteLine("Save config");
 			}
 		}
-		
-		private void ListenerCallback(IAsyncResult result)
-		{
-			HttpListener listener = (HttpListener) result.AsyncState;
-    		// Call EndGetContext to complete the asynchronous operation.
-			HttpListenerContext context = listener.EndGetContext(result);
-			
-			DateTime t = DateTime.Now;
-			Console.WriteLine("Request: {0} : {1}",
-				context.Request.HttpMethod, 
-				context.Request.RawUrl);
-			
-    		Process(context);
-			
-			Console.WriteLine("Response: {0} : {1} [{2} ms]",
-				context.Response.StatusCode,
-				context.Response.StatusDescription,
-				(DateTime.Now - t).Milliseconds
-			);
-		}	
 		
 		private void Process(HttpListenerContext context)
 		{
@@ -166,12 +159,12 @@ namespace Galilei
 			Serializer serializer = null;
 			switch (format) {
 			case "json":
-				serializer = new JsonSerializer(node);
+				serializer = new JsonSerializer(node.GetType());
 				response.ContentType = "application/json";
 
 			break;
 			case "xml":
-				serializer = new XmlSerializer(node);
+				serializer = new XmlSerializer(node.GetType());
 				response.ContentType = "application/xml";
 			break;
 			default:
@@ -180,7 +173,7 @@ namespace Galilei
 			}
 			
 			if (response.StatusCode == 200) {
-				string data = serializer.Serialize();
+				string data = serializer.Serialize(node);
 				byte[] buffer = System.Text.Encoding.UTF8.GetBytes(data);
 				response.ContentLength64 = buffer.Length;
 				response.OutputStream.Write(buffer, 0, buffer.Length);

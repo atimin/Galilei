@@ -2,7 +2,7 @@ using System;
 
 using Galilei.Core;
 
-namespace Galilei.Test
+namespace Galilei
 {
 	[Node]
 	public class TestNode : Node

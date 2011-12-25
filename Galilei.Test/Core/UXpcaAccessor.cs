@@ -1,11 +1,10 @@
 using NUnit.Framework;
 using System;
-using Galilei.Core;
 
-namespace Galilei.Core.Test.Xpca
+namespace Galilei.Core
 {
 	[Node]
-	public class TestNode : Node
+	public class FlagsNode : Node
 	{
 		public bool isConfiged;
 		public bool isChanged;
@@ -29,12 +28,12 @@ namespace Galilei.Core.Test.Xpca
 	public class UXpcaAccessor
 	{
 		private XpcaProxy proxy;
-		private TestNode node;
+		private FlagsNode node;
 		
 		[SetUp]
 		public void SetUp()
 		{
-			node = new TestNode();
+			node = new FlagsNode();
 			
 			proxy = new XpcaProxy(node);
 			proxy.ConfigChange += new EventHandler<ChangeEventArgs>(OnConfig);
@@ -82,7 +81,7 @@ namespace Galilei.Core.Test.Xpca
 		private void OnConfig(object sender, ChangeEventArgs e)
 		{
 			XpcaProxy proxy = sender as XpcaProxy;
-			TestNode node = proxy.Node as TestNode;
+			FlagsNode node = proxy.Node as FlagsNode;
 			
 			node.isConfiged = true;
 		}

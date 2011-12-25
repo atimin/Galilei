@@ -1,0 +1,18 @@
+{
+  "/": {
+    "type": "Server",
+    "name": "/",
+    "host": "127.0.0.1",
+    "port": "3001"
+  },
+  "/node_1": {
+    "type": "Node",
+    "name": "node_1",
+    "parent": "xpca://"
+   },
+   "/node_1/node_2": {
+   	 "type": "Node",
+     "name": "node_2",
+     "parent": "xpca://node_1"
+   }
+}

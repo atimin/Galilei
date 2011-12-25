@@ -1,7 +1,7 @@
 using System;
 using NUnit.Framework;
 
-namespace Galilei.Core.Test
+namespace Galilei.Core
 {
 	[TestFixture]
 	public class UNode

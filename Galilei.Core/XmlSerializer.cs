@@ -8,13 +8,15 @@ namespace Galilei.Core
 {
 	public class XmlSerializer : Serializer
 	{
-		public XmlSerializer(Node node) : base(node)
+		public XmlSerializer(Type type) : base(type)
 		{
 		}
 		
-		public override string Serialize(Type typeAttr)
+		public override string Serialize(Node node, Type typeAttr)
 		{
+			XpcaProxy proxy = new XpcaProxy(node);
 			StringWriter sw = new StringWriter();
+			
 			using(XmlWriter xmlWriter = new XmlTextWriter(sw))
 			{
 				xmlWriter.WriteProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
@@ -44,7 +46,7 @@ namespace Galilei.Core
 			return sw.ToString();
 		}
 				
-		public override void Deserialize(string data)
+		public override void Deserialize(Node node, string data)
 		{
 			TextReader tr = new StringReader(data);
 			Dictionary<string, object> properties = new Dictionary<string, object>();
@@ -76,7 +78,7 @@ namespace Galilei.Core
 				} while(xmlReader.Read());								
 			}
 			
-			UpdateNode (properties);
+			UpdateNode (node, properties);
 		}
 		
 				

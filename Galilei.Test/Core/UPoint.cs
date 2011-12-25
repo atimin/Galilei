@@ -1,9 +1,7 @@
 using NUnit.Framework;
 using System;
 
-using Galilei.Core;
-
-namespace Galilei.Core.Test
+namespace Galilei.Core
 {
 	[TestFixture()]
 	public class UPoint

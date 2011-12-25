@@ -14,7 +14,6 @@ namespace Galilei.Core
 		{
 		}
 		
-		
 		public ConfigAttribute(string description) : base(description)
 		{
 		}

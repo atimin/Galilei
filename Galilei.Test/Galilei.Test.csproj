@@ -31,31 +31,30 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework">
+    <Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <HintPath>..\References\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="Server\REST\UDelete.cs" />
-    <Compile Include="Server\REST\UGet.cs" />
-    <Compile Include="Server\REST\UPost.cs" />
-    <Compile Include="Server\REST\UPut.cs" />
-    <Compile Include="Server\UConfig.cs" />
-    <Compile Include="Server\TestNode.cs" />
     <Compile Include="Core\UNode.cs" />
     <Compile Include="Core\URoot.cs" />
-    <Compile Include="Core\Xpca\UXpcaAccessor.cs" />
-    <Compile Include="Core\Xpca\UXpcaJsonSerializer.cs" />
-    <Compile Include="Core\Xpca\UXpcaXmlSerializer.cs" />
     <Compile Include="Core\UPoint.cs" />
+    <Compile Include="Core\UXpcaAccessor.cs" />
+    <Compile Include="Core\UXpcaJsonSerializer.cs" />
+    <Compile Include="Core\UXpcaXmlSerializer.cs" />
+    <Compile Include="UPut.cs" />
+    <Compile Include="UConfig.cs" />
+    <Compile Include="TestNode.cs" />
+    <Compile Include="UDelete.cs" />
+    <Compile Include="UGet.cs" />
+    <Compile Include="UPost.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Server\" />
-    <Folder Include="Server\REST\" />
-    <Folder Include="Core\Xpca\" />
+    <Folder Include="Core\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Galilei.Core\Galilei.Core.csproj">
@@ -66,5 +65,10 @@
       <Project>{C828CCCF-D65C-45FB-ABCA-FD2C1E52B650}</Project>
       <Name>Galilei</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test_config.json.example">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

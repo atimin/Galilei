@@ -1,9 +1,8 @@
 using NUnit.Framework;
 using System;
-using Galilei;
 using Galilei.Core;
 
-namespace Galilei.Test
+namespace Galilei
 {
 	[TestFixture()]
 	public class UConfig
